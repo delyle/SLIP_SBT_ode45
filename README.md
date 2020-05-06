@@ -1,1 +1,1 @@
-SLIP_SBT_ode45
+Matlab model for SLIP on a split-belt treadmill.
