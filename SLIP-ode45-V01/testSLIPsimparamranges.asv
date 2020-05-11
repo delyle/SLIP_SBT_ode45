@@ -1,24 +1,22 @@
 clear; close all; clc;
 
-m = 80; %in kg
-L0 = 1; %in m
-g = 9.81; %in m/s^2
+% m = 80kg
+% l0 = 1m
+% 
 
-%fully animate the solution, distinguish phase 1/2
-
-vbelt1 = 1.5/sqrt(g*L0);
-vbelt2 = 0.5/sqrt(g*L0);
+vbelt1 = 1.5/sqrt(9.81*0.88);
+vbelt2 = 0.5/sqrt(9.81*0.88);
 % vbelt1 = 1.5;
 % vbelt2 = 0.5;
 
 theta01 = -pi/4;
 theta02 = -pi/4;
-U01 = 1;
+U01 = 1.5;
 V01 = .5;
 c1 = 0;
 c2 = 0;
 
-K = 10;
+K = .5;
 K1 = K;
 K2 = K;
 
