@@ -19,7 +19,7 @@ if saveanimation
     filename = 'SLIPSBT.gif';
 end
 
-[ti,xi,yi,ui,vi,~,~,T1,T2,t2flight,d,Ef,E0,xprev,yprev] = SLIPsim(vbelt1,vbelt2,theta01,theta02,U01,h01,c,K,K);
+[ti,xi,yi,ui,vi,T1,T2,t2flight,d,Ef,E0,xprev,yprev] = SLIPsim(vbelt1,vbelt2,theta01,theta02,U01,h01,c,K,K);
 n = length(ti)-1;
 
 %% Force plots
