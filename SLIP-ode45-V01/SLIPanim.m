@@ -1,13 +1,28 @@
-function SLIPanim(ti,xi,yi,ui,vi,T1,T2,t2flight,d,discrep)
+function SLIPanim(ti,xi,yi,ui,vi,T1,T2,t2flight,d,vbelt1,vbelt2,saveanimation,plotvec)
 %UNTITLED Summary of this function goes here
+% CAREFUL: discrep is an output of SLIPsim but not a required input for
+% SLIPanim.m!
+
 %   Detailed explanation goes here
+
+if nargin < 12
+    saveanimation = true;
+    plotvec = true;
+end
+
+if saveanimation
+    filename = 'SLIPSBT.gif';
+end
+
+
 figure('Color','white');
 box on
-yl = [0 20];
-xl = [-35 15];
+yl = [0 5];
+xl = [-20 15];
 n = length(ti)-1;
 FR = 60;
 hold on
+
 for i = 1:n+1
     if i > 1
         delete(lh)
@@ -57,5 +72,6 @@ for i = 1:n+1
     end
    
 end
+
 end
 

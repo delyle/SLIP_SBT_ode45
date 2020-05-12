@@ -32,8 +32,7 @@ function [ti,xi,yi,ui,vi,T1,T2,t2flight,d,discrep] = SLIPsim(vbelt1,vbelt2,theta
 % dV = K*(1-L)*cos(theta) - 1;
 
 %% PROBLEM PARAMETERS
-% Non-dimensionalization: m = g = l = 1
-g = 1;
+g = 1; % non-dimensionalized
 L0 = 1;
 discrep = 1000;
 

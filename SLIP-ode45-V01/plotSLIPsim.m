@@ -1,4 +1,6 @@
 function plotSLIPsim(ti,xi,yi,T1,T2,t2flight,vbelt1,vbelt2,d)
+% ABORTED May 12, 2020. Use SLIPanim.m now
+
 % This function plots a freeze frame of the solved SLIP from SLIPsim.m
 
 %% NON-DIM PARAMETERS
