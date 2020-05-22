@@ -17,8 +17,8 @@ end
 
 figure('Color','white');
 box on
-yl = [0 5];
-xl = [-20 15];
+yl = [0 3];
+xl = [-10 10];
 n = length(ti)-1;
 FR = 60;
 hold on

@@ -27,8 +27,8 @@ vbelt2 = 0.5/sqrt(g*L0);
 
 theta01 = -pi/6;
 theta02 = -pi/6;
-U01 = 1.5;
-V01 = .5;
+U01 = .5;
+V01 = 1;
 
 c = 0;
 c1 = c;
