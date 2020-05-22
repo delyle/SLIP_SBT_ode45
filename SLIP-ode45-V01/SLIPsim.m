@@ -57,13 +57,13 @@ X1 = Z1(:,1); Y1 = Z1(:,2); U1 = Z1(:,3); V1 = Z1(:,4);
 
 % Error catching for Phase 1
 % hits ground during Phase 1
-if ze1(2) < 1e-3
+if ze1(2) == 0 % y = 0
     invalidate();
     return
 end
 % peak height not sufficient to enter Phase 2
-Vpeak1 = 0; %fill in this equation
-if Vpeak1 < L0*cos(theta02) % Y02
+Ypeak1 = Y1(end) + (V1(end))^2/(2*g); %fill in this equation
+if Ypeak1 < L0*cos(theta02) % Y02
     invalidate();
     return
 end
@@ -110,6 +110,13 @@ options = odeset('Events',@(T,Z) springmassTerminate(T,Z,L0,vbelt2,f));
 % this solves the ode
 [T2,Z2,te2,ze2,ie2] = ode45(@(T,Z) springmassODE(T,Z,K2,L0,vbelt2,c2),[0;Tmax],Z02,options);
 X2 = Z2(:,1); Y2 = Z2(:,2); U2 = Z2(:,3); V2 = Z2(:,4);
+
+% Error catching for Phase 2
+% hits ground during Phase 2
+if ze2(2) == 0 % y = 0
+    invalidate();
+    return
+end
 
 % failure events should have been caught from state 1 as well as not having enough height to get to theta02
 % now, track same failures (hit ground, not high enough for theta01) then
