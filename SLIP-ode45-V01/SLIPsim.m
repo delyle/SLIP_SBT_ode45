@@ -42,7 +42,7 @@ Tmax = 40;
 f = 1.01; % this is for failure event1 (mass falling through floor) OR IS IT THE ARC???
 
 %% PHASE 1
-X01 = L0*sin(theta01);
+X01 = -L0*sin(theta01); %theta is positive CCW
 Y01 = L0*cos(theta01);
 Z01 = [X01 Y01 U01 -V01]; % define initial conditions
 
@@ -96,7 +96,7 @@ end
 
 
 %% PHASE 2
-X02 = L0*sin(theta02);
+X02 = -L0*sin(theta02);
 Y02 = L0*cos(theta02);
 
 U02 = U1(end); % U is conserved
