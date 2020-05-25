@@ -129,7 +129,7 @@ end
 % q stands for query (made to evenly space time intervals)
 Tq1 = linspace(0,T1(end),101);
 Tq2 = linspace(0,T2(end),101);
-% interpolate all states
+% interpolate all states for Phase 1 & 2 (no flight phases so far)
 Zq1 = interp1(T1,Z1,Tq1,'spline');
 Zq2 = interp1(T2,Z2,Tq2,'spline');
 
@@ -146,8 +146,11 @@ T1 = Tq1'; T2 = Tq2';
 X1 = Zq1(:,1); Y1 = Zq1(:,2); U1 = Zq1(:,3); V1 = Zq1(:,4);
 X2 = Zq2(:,1); Y2 = Zq2(:,2); U2 = Zq2(:,3); V2 = Zq2(:,4);
 
-%Time to add flight phases
+%Now add flight phases and stitch them together with Phase 1 & 2
 %Flight (after) Phase 1
+
+%ASSUMING V1(end) IS UPWARDS
+
 T1apex = V1(end)/g; %time to reach apex (-ve cancels out with g = 1 instead of -1)
 T1drop = abs(2*(Y02 - Yapex1)/abs(V02)); %time to drop from apex
 T1flight = T1apex + T1drop;
@@ -195,6 +198,10 @@ vi = interp1(t,v,ti);
 
 
 %% Track discrepancy @ fall point through ground (DON'T FORGET: ALSO REQUIRE STORAGE OF ZF AND ZI)
+
+%ASSUMING V01 IS DOWNWARDS???? THEN WHAT ABOUT V2(END)?? HOW DO I KNOW THAT
+%I'M GETTING TO PEAK AND THEN DROPPING VERSUS GOING STRAIGHT TOWARDS THE
+%GROUND?
 
 %Phase 1
 t2gnd1 = roots([g/2 V01 -Y01]); %time to fall to ground

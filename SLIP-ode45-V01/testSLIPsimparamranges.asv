@@ -32,9 +32,9 @@ U01 = .5;
 V01 = 1;
 
 % zeta range of interest
-zeta = linspace(0,2,5);
+zeta = linspace(0,2,
 
-c = zeta*(2*sqrt(K)); % calculate C' based on zeta for input into the problem
+c = 0;
 c1 = c;
 c2 = c;
 
