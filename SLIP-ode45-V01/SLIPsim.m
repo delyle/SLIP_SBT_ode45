@@ -17,6 +17,19 @@ function [ti,xi,yi,ui,vi,T1,T2,t2flight,d,discrep] = SLIPsim(vbelt1,vbelt2,theta
 % The origin is the point of foot contact at the beginning of each phase.
 % IF the solution is invalid, discrep is set to NaN
 
+% outputs initialized here so that no error occurs when invalidating
+% mid-function
+ti = NaN;
+xi = NaN;
+yi = NaN;
+ui = NaN;
+vi = NaN;
+T1 = NaN;
+T2 = NaN;
+t2flight = NaN;
+d = NaN;
+discrep = 0;
+
 %% Possible Solution Errors
 
     
@@ -205,12 +218,12 @@ vi = interp1(t,v,ti);
 
 %Phase 1
 t2gnd1 = roots([g/2 V01 -Y01]); %time to fall to ground
-t2gnd1 = time2gnd1(time2gnd1 >= 0); %select positive root only
+t2gnd1 = t2gnd1(t2gnd1 >= 0); %select positive root only
 x2gnd1 = U01*t2gnd1 + X01; %horz distance travelled during that time
 
 %Phase 2
 t2gnd2 = roots([g/2 V2(end) -Y02]); %time to fall to ground from beginning of flight phase 2
-t2gnd2 = time2gnd2(time2gnd2 >= 0); %select positive root only
+t2gnd2 = t2gnd2(t2gnd2 >= 0); %select positive root only
 x2gnd2 = U2(end)*t2gnd2 + xi(end); %horz distance travelled during that time
 
 discrep = x2gnd2 - x2gnd1;
