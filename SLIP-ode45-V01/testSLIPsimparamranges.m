@@ -26,9 +26,9 @@ g = 9.81; %in m/s^2
 vbelt1 = 1.5/sqrt(g*L0);
 vbelt2 = 0.5/sqrt(g*L0);
 
-% theta is positive CCW
-theta01 = pi/4;
-theta02 = pi/3;
+% theta is positive CCW, where zero is the vertical
+theta01 = pi/6;
+theta02 = pi/4;
 U01 = .5;
 V01 = 1;
 
