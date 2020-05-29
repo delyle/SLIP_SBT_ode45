@@ -5,6 +5,11 @@ function [ti,xi,yi,ui,vi,T1,T2,t2flight,d,discrep] = SLIPsim(vbelt1,vbelt2,theta
 % Previous function header
 % function [ti,xi,yi,ui,vi,L0,g,T1,T2,t2flight,d,Ef,E0,xprev,yprev] = SLIPsim(vbelt1,vbelt2,theta01,theta02,U01,V01,c1,c2,K1,K2)
 
+%% To-Do
+
+% add codes to identify error/invalidation causes
+% consider maximum height
+
 %% Function Outputs Explained
 % - ti through vi are vectors of interpolated values (ti has uniform
 % intervals) of the solution
@@ -29,9 +34,6 @@ T2 = NaN;
 t2flight = NaN;
 d = NaN;
 discrep = 0;
-
-%% Possible Solution Errors
-
     
 %% PROBLEM INFO, EQUATIONS OF MOTION
 % This code solves SLIP on a treadmill
@@ -52,7 +54,7 @@ discrep = 1000;
 
 % ode45 event parameters
 Tmax = 40;
-f = 1.01; % this is for failure event1 (mass falling through floor) OR IS IT THE ARC???
+f = 1.01; % this is for failure event1 (exceed leg length) in springmassTerminate.m
 
 %% PHASE 1
 X01 = -L0*sin(theta01); %theta is positive CCW
@@ -70,7 +72,7 @@ X1 = Z1(:,1); Y1 = Z1(:,2); U1 = Z1(:,3); V1 = Z1(:,4);
 
 % Error catching for Phase 1
 % hits ground during Phase 1
-if ze1(2) == 0 % y = 0
+if ze1(2) <= 0 % y = 0
     invalidate();
     warning("hit ground in Phase 1")
     return
@@ -83,33 +85,6 @@ if Ypeak1 < L0*cos(theta02) % Y02
     return
 end
 
-
-%if it hit the ground, end solution
-% if ze1(end,2) < 0.1
-%     n = 120; %arbitrary number
-%     ti = linspace(0,T1(end),n+1);
-%     xi = interp1(T1,X1,ti);
-%     yi = interp1(T1,Y1,ti);
-%     ui = interp1(T1,U1,ti);
-%     vi = interp1(T1,V1,ti);
-%     kinematicError()
-%     T2 = 0;
-%     t2flight = 0;
-%     d = 0;
-%     return
-% end
-
-%if it's too low coming out of phase 1 (based on theta02), end solution
-    % not sure about this one yet since what if it's lower coming out of
-    % phase 1, but has enough vertical velocity to get back up to height?
-    % If you find the theoretical peak of the flight phase and it's lower,
-    % then it shouldn't work. Okay... but then what? Do you take the
-    % solution at the end of Phase or after the fligth phase? What does
-    % this solution represent? Like, what exactly would be the use of that
-    % solution? It could lead me to erroneously interpreting that solution
-    % as somethign that it's not..? Not clear yet.
-
-
 %% PHASE 2
 X02 = -L0*sin(theta02);
 Y02 = L0*cos(theta02);
@@ -117,9 +92,16 @@ Y02 = L0*cos(theta02);
 U02 = U1(end); % U is conserved
 Yapex1 = Y1(end) + V1(end)^2/(2*g); % peak of flight phase arc after Phase 1
 
-% add invalidation: discard when yapex1 < y02 OR V1(end) is negative
-% add different flags for different conditions when invalidated
-% consider maximum height
+if Yapex1 < Y02
+    invalidate();
+    warning("Yapex1 too low to enter Phase 2");
+    return
+end
+if V1(end) < 0
+    invalidate();
+    warning("No peak in flight out of Phase 1");
+    return
+end
 
 V02 = -sqrt(2*g*(Yapex1 - Y02)); % make negative since we know it is downwards
 Z02 = [X02 Y02 U02 V02];
@@ -133,17 +115,11 @@ X2 = Z2(:,1); Y2 = Z2(:,2); U2 = Z2(:,3); V2 = Z2(:,4);
 
 % Error catching for Phase 2
 % hits ground during Phase 2
-if ze2(2) == 0 % y = 0
+if ze2(2) <= 0 % y = 0
     invalidate();
     warning("hit ground in Phase 2")
     return
 end
-
-% failure events should have been caught from state 1 as well as not having enough height to get to theta02
-% now, track same failures (hit ground, not high enough for theta01) then
-% fail the solution
-% Failures should be caught by error minimization function for after Phase
-% 2 (or flight phase of Phase 2?)
 
 %% JOIN PHASES INTO CONTINUOUS VECTOR
 
@@ -154,13 +130,6 @@ Tq2 = linspace(0,T2(end),101);
 Zq1 = interp1(T1,Z1,Tq1,'spline');
 Zq2 = interp1(T2,Z2,Tq2,'spline');
 
-%??? not sure if i need this anymore (only for h01)
-%Flight phase prior to Phase 1
-% Tprev = abs(V01/g);
-% tprev = linspace(0,Tprev);
-% xprev = X01 - U01*tprev(end) + U01.*tprev;
-% yprev = h01 - 1/2*g*tprev.^2;
-
 %Redefine time and states with queried values
 %At this stage T2(1) = 0, which must be converted later
 T1 = Tq1'; T2 = Tq2';
@@ -170,8 +139,6 @@ X2 = Zq2(:,1); Y2 = Zq2(:,2); U2 = Zq2(:,3); V2 = Zq2(:,4);
 %Now add flight phases and stitch them together with Phase 1 & 2
 %Flight (after) Phase 1
 
-%ASSUMING V1(end) IS UPWARDS
-
 % only proceed if V1(end) is UPWARDS
 if V1(end) < 0
     invalidate();
@@ -180,7 +147,6 @@ if V1(end) < 0
 end
 
 T1apex = V1(end)/g; %time to reach apex (-ve cancels out with g = 1 instead of -1)
-% T1drop = abs(2*(Y02 - Yapex1)/abs(V02)); %time to drop from apex
 T1drop = roots([1/2*g 0 Y02-Yapex1]); %time to drop from apex
 T1drop = T1drop(T1drop > 0); % select positive root
 if length(T1drop) > 1 % checks that there is only 1 value for T1drop
@@ -189,7 +155,7 @@ end
 
 T1flight = T1apex + T1drop; % compute total flight time from Phase 1
 
-d = X1(end) - X02 + U1(end)*T1flight;  % "step length" to reset the origin
+d = X1(end) - X02 + U1(end)*T1flight;  % "step length" to reset the origin to the global frame
 
 %convert flight-phase 1 vectors into global time
 t1flight = linspace(0,T1flight,51)' + T1(end);
@@ -197,30 +163,38 @@ x1flight = X1(end) + U1(end)*(t1flight - T1(end));
 y1flight = Y1(end) - 1/2*g*(t1flight - T1(end)).^2 + V1(end)*(t1flight-T1(end));
 u1flight = U1(end)*ones(size(t1flight));
 v1flight = V1(end) - g*(t1flight - T1(end));
-% F1flight = zeros(size(t1flight));
 
-% FLIGHT PHASE 2
+% Flight (after) Phase 2
 
-% assume apex in flight phase 2 -> V2(end) upwards
-% only proceed if V2(end) is UPWARDS
-if V2(end) < 0
-    invalidate();
-    warning('V2(end) downwards!');
-    return
-end
+if V2(end) >= 0
+    Yapex2 = Y2(end) + V2(end)^2/(2*g); %apex height
+    YflightMax2 = Yapex2; % assume there will be an apex by default in flight Phase 2
 
-Yapex2 = Y2(end) + V2(end)^2/(2*g); %apex height
-
-% if peak height after Phase 2 lower than Y
-YnextPhase = Y01;
+% if peak height after Phase 2 lower than Y01, simulate flight until CoM
+% hits ground
+YnextPhase = Y01; % target drop height from Yapex2
 if Yapex2 < Y01
-    YnextPhase = 0;
+    YnextPhase = 0; % just go hit the ground if can't reach Y01
 end
 
 T2apex = V2(end)/g; %time to reach apex
-% T2drop = abs(2*(Y01 - Yapex2)/V01); %time to drop from apex to Y01
 
-T2drop = roots([1/2*g 0 YnextPhase-Yapex2]); %time to drop from apex
+VflightEntry2 = 0; %DOWNWARDS IS POSITIVE for this drop velocity!!!
+% if there will be no peak in Phase 2 flight
+if V2(end) < 0
+    YflightMax2 = Y2(end);
+    T2apex = 0;
+    VflightEntry2 = -V2(end); %to make it positive downward
+end
+
+T2drop = roots([1/2*g VflightEntry2 YnextPhase-YflightMax2]); %time to drop from apex to YnextPhase (downwards is +ve)
+% Check for complex roots and invalidate if found
+if ~isreal(T2drop)
+    invalidate();
+    warning('T2drop is complex. This is most likely a problem with the model');
+    return
+end
+
 T2drop = T2drop(T2drop > 0); % select positive root
 if length(T2drop) > 1 % checks that there is only 1 value for T1drop
     warning('two positive roots for T2drop');
@@ -236,7 +210,6 @@ x2flight = X2(end) + U2(end)*(t2flight - T2(end));
 y2flight = Y2(end) - 1/2*g*(t2flight - T2(end)).^2 + V2(end)*(t2flight-T2(end));
 u2flight = U2(end)*ones(size(t2flight));
 v2flight = V2(end) - g*(t2flight - T2(end));
-% F2flight = zeros(size(t2flight));
 
 % combine time, states into one vector each
 t = [T1; t1flight(2:end); T2(2:end); t2flight(2:end)];
@@ -246,7 +219,7 @@ u = [U1; u1flight(2:end); U2(2:end); u2flight(2:end)];
 v = [V1; v1flight(2:end); V2(2:end); v2flight(2:end)];
 
 % CREATE INTERPOLATED VECTORS FOR FUNCTION OUTPUT
-n = 120; %arbitrary number
+n = 60; %arbitrary number
 ti = linspace(0,t(end),n+1);
 xi = interp1(t,x,ti);
 yi = interp1(t,y,ti);
@@ -255,10 +228,6 @@ vi = interp1(t,v,ti);
 
 
 %% Track discrepancy @ fall point through ground (DON'T FORGET: ALSO REQUIRE STORAGE OF ZF AND ZI)
-
-%ASSUMING V01 IS DOWNWARDS???? THEN WHAT ABOUT V2(END)?? HOW DO I KNOW THAT
-%I'M GETTING TO PEAK AND THEN DROPPING VERSUS GOING STRAIGHT TOWARDS THE
-%GROUND?
 
 %Phase 1
 % note: Tgnd1 = time to free fall to the ground from Phase 1 start
@@ -274,8 +243,7 @@ Xgnd2 = U2(end)*Tgnd2 + (X2(end) + d); %horz distance travelled during that time
 
 discrep = Xgnd2 - Xgnd1;
 
-
-% Function to invalidate a solution
+%% Function to invalidate a solution
     function invalidate
         discrep = NaN;
     end
