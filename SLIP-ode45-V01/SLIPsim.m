@@ -72,12 +72,14 @@ X1 = Z1(:,1); Y1 = Z1(:,2); U1 = Z1(:,3); V1 = Z1(:,4);
 % hits ground during Phase 1
 if ze1(2) == 0 % y = 0
     invalidate();
+    warning("hit ground in Phase 1")
     return
 end
 % peak height not sufficient to enter Phase 2
 Ypeak1 = Y1(end) + (V1(end))^2/(2*g); %fill in this equation
 if Ypeak1 < L0*cos(theta02) % Y02
     invalidate();
+    warning("peak height too low to enter Phase 2")
     return
 end
 
@@ -133,6 +135,7 @@ X2 = Z2(:,1); Y2 = Z2(:,2); U2 = Z2(:,3); V2 = Z2(:,4);
 % hits ground during Phase 2
 if ze2(2) == 0 % y = 0
     invalidate();
+    warning("hit ground in Phase 2")
     return
 end
 
@@ -184,9 +187,9 @@ if length(T1drop) > 1 % checks that there is only 1 value for T1drop
     warning('two positive roots for T1drop');
 end
 
-T1flight = T1apex + T1drop;
+T1flight = T1apex + T1drop; % compute total flight time from Phase 1
 
-d = X1(end) - X02 + U1(end)*T1flight; %"step length" to reset the origin
+d = X1(end) - X02 + U1(end)*T1flight;  % "step length" to reset the origin
 
 %convert flight-phase 1 vectors into global time
 t1flight = linspace(0,T1flight,51)' + T1(end);
@@ -196,10 +199,34 @@ u1flight = U1(end)*ones(size(t1flight));
 v1flight = V1(end) - g*(t1flight - T1(end));
 % F1flight = zeros(size(t1flight));
 
-%Flight Phase 2
+% FLIGHT PHASE 2
+
+% assume apex in flight phase 2 -> V2(end) upwards
+% only proceed if V2(end) is UPWARDS
+if V2(end) < 0
+    invalidate();
+    warning('V2(end) downwards!');
+    return
+end
+
 Yapex2 = Y2(end) + V2(end)^2/(2*g); %apex height
+
+% if peak height after Phase 2 lower than Y01, simulate flight until CoM
+% hits ground
+YnextPhase = Y01; % target drop height from Yapex2
+if Yapex2 < Y01
+    YnextPhase = 0; % just go hit the ground if can't reach Y01
+end
+
 T2apex = V2(end)/g; %time to reach apex
-T2drop = abs(2*(Y01 - Yapex2)/V01); %time to drop from apex to Y01
+% T2drop = abs(2*(Y01 - Yapex2)/V01); %time to drop from apex to Y01
+
+T2drop = roots([1/2*g 0 YnextPhase-Yapex2]); %time to drop from apex to YnextPhase
+T2drop = T2drop(T2drop > 0); % select positive root
+if length(T2drop) > 1 % checks that there is only 1 value for T1drop
+    warning('two positive roots for T2drop');
+end
+
 T2flight = T2apex + T2drop;
 
 %convert to flight phase 2 vectors into global time
@@ -235,16 +262,18 @@ vi = interp1(t,v,ti);
 %GROUND?
 
 %Phase 1
-t2gnd1 = roots([g/2 V01 -Y01]); %time to fall to ground
-t2gnd1 = t2gnd1(t2gnd1 >= 0); %select positive root only
-x2gnd1 = U01*t2gnd1 + X01; %horz distance travelled during that time
+% note: Tgnd1 = time to free fall to the ground from Phase 1 start
+Tgnd1 = roots([g/2 V01 -Y01]); %time to fall to ground
+Tgnd1 = Tgnd1(Tgnd1 >= 0); %select positive root only
+Xgnd1 = U01*Tgnd1 + X01; %horz distance travelled during that time
 
 %Phase 2
-t2gnd2 = roots([g/2 V2(end) -Y02]); %time to fall to ground from beginning of flight phase 2
-t2gnd2 = t2gnd2(t2gnd2 >= 0); %select positive root only
-x2gnd2 = U2(end)*t2gnd2 + xi(end); %horz distance travelled during that time
+% note: Tgnd2 = time to free fall to the ground from Phase 2 end
+Tgnd2 = roots([-g/2 V2(end) Y2(end)]); %time to fall to ground from beginning of flight phase 2
+Tgnd2 = Tgnd2(Tgnd2 >= 0); %select positive root only
+Xgnd2 = U2(end)*Tgnd2 + (X2(end) + d); %horz distance travelled during that time
 
-discrep = x2gnd2 - x2gnd1;
+discrep = Xgnd2 - Xgnd1;
 
 
 % Function to invalidate a solution

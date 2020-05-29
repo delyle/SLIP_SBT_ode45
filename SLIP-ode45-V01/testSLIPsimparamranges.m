@@ -29,7 +29,7 @@ vbelt2 = 0.5/sqrt(g*L0);
 % theta is positive CCW, where zero is the vertical
 theta01 = pi/6;
 theta02 = pi/4;
-U01 = .5;
+U01 = 1;
 V01 = 1;
 
 K = 10;
@@ -47,7 +47,7 @@ c2 = c;
 [ti,xi,yi,ui,vi,T1,T2,t2flight,d,discrep] = ...
     SLIPsim(vbelt1,vbelt2,theta01,theta02,U01,V01,c1,c2,K1,K2);
 if isnan(discrep)
-    warning('solution invalid');
+    disp('solution invalid');
 end
 
 if ~isnan(discrep)
