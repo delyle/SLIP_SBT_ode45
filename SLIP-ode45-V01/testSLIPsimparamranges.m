@@ -44,20 +44,25 @@ c = zeta*(2*sqrt(K)); % calculate C' based on zeta for input into the problem
 c1 = c;
 c2 = c;
 
+
+discrepMatrix = zeros(length(theta01),length(theta02),length(U01),length(V01),length(zeta));
+
 for i = 1:length(theta01)
     for j = 1:length(theta02)
-        fprintf('i = %.f, j = %.f \n',i,j);
+%         fprintf('i = %.f, j = %.f \n',i,j);
         for k = 1:length(U01)
             for l = 1:length(V01)
-                [ti,xi,yi,ui,vi,T1,T2,t2flight,d,discrep] = ...
-                    SLIPsim(vbelt1,vbelt2,theta01(i),theta02(j),U01(k),V01(l),c1,c2,K1,K2);
-                if isnan(discrep)
-                    disp('solution invalid');
-                end
-
-%                 if ~isnan(discrep)
-%                     SLIPanim(ti,xi,yi,ui,vi,T1,T2,t2flight,d,vbelt1,vbelt2);
-%                 end
+                for m = 1:length(zeta)
+                    [ti,xi,yi,ui,vi,T1,T2,t2flight,d,discrep] = ...
+                        SLIPsim(vbelt1,vbelt2,theta01(i),theta02(j),U01(k),V01(l),c1,c2,K1,K2);
+                    if isnan(discrep)
+                        disp('solution invalid');
+                    end
+    %                 if ~isnan(discrep)
+    %                     SLIPanim(ti,xi,yi,ui,vi,T1,T2,t2flight,d,vbelt1,vbelt2);
+    %                 end
+                    discrepMatrix(i,j,k,l,m) = discrep;
+                end                
             end
         end
     end

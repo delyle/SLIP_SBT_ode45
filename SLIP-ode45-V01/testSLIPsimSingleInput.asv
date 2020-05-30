@@ -28,10 +28,10 @@ vbelt1 = 1.5/sqrt(g*L0);
 vbelt2 = 0.5/sqrt(g*L0);
 maxBeltSpd = max(vbelt1,vbelt2);
 % theta is positive CCW, where zero is the vertical
-theta01 = pi/4;
-theta02 = -pi/4;
-U01 = 0.4*maxBeltSpd;
-V01 = 0.25*maxBeltSpd;
+theta01 = pi/3;
+theta02 = pi/3;
+U01 = 0.5*maxBeltSpd;
+V01 = 0.5*maxBeltSpd;
 
 K = 10;
 K1 = K;
@@ -46,7 +46,7 @@ c1 = c;
 c2 = c;
 
 [ti,xi,yi,ui,vi,T1,T2,t2flight,d,discrep] = ...
-                    SLIPsim(vbelt1,vbelt2,theta01,theta02,U01,V01,c1,c2,K1,K2);
+                    SLIPsim(vbelt1,vbelt2,theta01,theta02(j),U01(k),V01(l),c1,c2,K1,K2);
                 if isnan(discrep)
                     disp('solution invalid');
                 end

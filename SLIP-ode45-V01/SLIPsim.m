@@ -166,30 +166,28 @@ v1flight = V1(end) - g*(t1flight - T1(end));
 
 % Flight (after) Phase 2
 
-if V2(end) >= 0
-    Yapex2 = Y2(end) + V2(end)^2/(2*g); %apex height
-    YflightMax2 = Yapex2; % assume there will be an apex by default in flight Phase 2
+VdropEntry2 = 0; % Drop velocity from max height of flight Phase 2 (downwards is +ve)
 
-    % if peak height after Phase 2 lower than Y01, simulate flight until CoM
-    % hits ground
+if V2(end) > 0 % if V2(end) upwards
+    % if there will be an APEX in Phase 2 flight
+    Yapex2 = Y2(end) + V2(end)^2/(2*g); %apex height
+    YflightMax2 = Yapex2; % max height during flight phase is Yapex2 if there is an apex
+    T2apex = V2(end)/g; %time to reach apex
+
+    % if apex lower than Y01, simulate flight until CoM hits ground
     YnextPhase = Y01; % target drop height from Yapex2
     if Yapex2 < Y01
         YnextPhase = 0; % just go hit the ground if can't reach Y01
     end
+else    
+    % there will be NO APEX in flight Phase 2
+    YflightMax2 = Y2(end); % max height will be at Phase 2 exit
+    T2apex = 0; % no time required to reach apex
+    VdropEntry2 = -V2(end); % -ve added since downward is positive for the T2drop calcluation    
+    YnextPhase = 0; %i.e. go straight to the ground
 end
 
-T2apex = V2(end)/g; %time to reach apex
-YnextPhase = 0;
-
-VflightEntry2 = 0; %DOWNWARDS IS POSITIVE for this drop velocity!!!
-% if there will be NO PEAK in Phase 2 flight
-if V2(end) < 0
-    YflightMax2 = Y2(end);
-    T2apex = 0;
-    VflightEntry2 = -V2(end); %to make it positive downward
-end
-
-T2drop = roots([1/2*g VflightEntry2 YnextPhase-YflightMax2]); %time to drop from apex to YnextPhase (downwards is +ve)
+T2drop = roots([1/2*g VdropEntry2 YnextPhase-YflightMax2]); %time to drop from apex to YnextPhase (downwards is +ve)
 % Check for complex roots and invalidate if found
 if ~isreal(T2drop)
     invalidate();
