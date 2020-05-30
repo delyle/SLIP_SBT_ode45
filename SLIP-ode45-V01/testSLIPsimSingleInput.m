@@ -28,10 +28,10 @@ vbelt1 = 1.5/sqrt(g*L0);
 vbelt2 = 0.5/sqrt(g*L0);
 maxBeltSpd = max(vbelt1,vbelt2);
 % theta is positive CCW, where zero is the vertical
-theta01 = pi/4;
-theta02 = -pi/4;
-U01 = 0.4*maxBeltSpd;
-V01 = 0.25*maxBeltSpd;
+theta01 = 0.785398;
+theta02 = -0.523599;
+U01 = 0.718370;
+V01 = 0.239457;
 
 K = 10;
 K1 = K;

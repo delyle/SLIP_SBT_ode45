@@ -1,4 +1,4 @@
-for i = 1
-    discrep(index1,index2,index3,index4,index5,index6) = 100;
-run find4Dindex.m
+while currentZeta == 0
+    discrepMatrix(index1,index2,index3,index4,index5) = 1000;
+    run findIndexMinDiscrep.m
 end
