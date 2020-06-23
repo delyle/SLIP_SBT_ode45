@@ -28,10 +28,10 @@ vbelt1 = 1.5/sqrt(g*L0);
 vbelt2 = 0.5/sqrt(g*L0);
 maxBeltSpd = max(vbelt1,vbelt2);
 % theta is positive CCW, where zero is the vertical
-theta01 = 0.785398;
-theta02 = -0.523599;
-U01 = 0.718370;
-V01 = 0.239457;
+% theta01 = 0.314159;
+% theta02 = -0.485287;
+% U01 = 0.095783;
+% V01 = 0.909935;
 
 K = 10;
 K1 = K;
@@ -39,7 +39,17 @@ K2 = K;
 
 % zeta range of interest
 % zeta = linspace(0,2,5);
-zeta = 0;
+% zeta = 0.2;
+
+
+%% testing section
+theta01 = 0.471239 
+theta02 = -0.945032 
+U01 = 0.335239 
+V01 = 0.383131 
+zeta = 0.200000 
+
+%%
 
 c = zeta*(2*sqrt(K)); % calculate C' based on zeta for input into the problem
 c1 = c;

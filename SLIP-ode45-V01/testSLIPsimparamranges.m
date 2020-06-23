@@ -27,10 +27,10 @@ g = 9.81; %in m/s^2
 vbelt1 = 1.5/sqrt(g*L0);
 vbelt2 = 0.5/sqrt(g*L0);
 % theta is positive CCW, where zero is the vertical
-theta01 = linspace(pi/3,0,7);
-theta02 = linspace(pi/3,-pi/3,7);
-U01 = linspace(0,2*max(vbelt1,vbelt2),5);
-V01 = linspace(0,2*max(vbelt1,vbelt2),5);
+theta01 = linspace(pi/3,0,21);
+theta02 = linspace(pi/3,-pi/3,42);
+U01 = linspace(0,2*max(vbelt1,vbelt2),21);
+V01 = linspace(0,2*max(vbelt1,vbelt2),21);
 
 K = 10;
 K1 = K;
@@ -38,7 +38,7 @@ K2 = K;
 
 % zeta range of interest
 % zeta = linspace(0,2,5);
-zeta = linspace(0,2,5);
+zeta = linspace(0,2,11);
 
 c = zeta*(2*sqrt(K)); % calculate C' based on zeta for input into the problem
 c1 = c;

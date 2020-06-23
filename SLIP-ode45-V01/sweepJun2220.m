@@ -1,3 +1,11 @@
+%% NOTE
+
+% These were the inputs that generated: sweepJune2220.mat
+% 
+% - Quang
+
+%%
+
 % This is script is meant for testing purposes (i.e. to run SLIPsim.m
 % and determine the permissible ranges of inputs that make sense for the
 % non-dimensionalization of this problem.
@@ -27,10 +35,10 @@ g = 9.81; %in m/s^2
 vbelt1 = 1.5/sqrt(g*L0);
 vbelt2 = 0.5/sqrt(g*L0);
 % theta is positive CCW, where zero is the vertical
-theta01 = linspace(pi/3,0,5);
-theta02 = linspace(pi/3,-pi/3,5);
-U01 = linspace(0,2*max(vbelt1,vbelt2),5);
-V01 = linspace(0,2*max(vbelt1,vbelt2),5);
+theta01 = linspace(pi/3,0,21);
+theta02 = linspace(pi/3,-pi/3,42);
+U01 = linspace(0,2*max(vbelt1,vbelt2),21);
+V01 = linspace(0,2*max(vbelt1,vbelt2),21);
 
 K = 10;
 K1 = K;
@@ -38,7 +46,7 @@ K2 = K;
 
 % zeta range of interest
 % zeta = linspace(0,2,5);
-zeta = linspace(0;
+zeta = linspace(0,2,11);
 
 c = zeta*(2*sqrt(K)); % calculate C' based on zeta for input into the problem
 c1 = c;
@@ -54,7 +62,7 @@ for i = 1:length(theta01)
             for l = 1:length(V01)
                 for m = 1:length(zeta)
                     [ti,xi,yi,ui,vi,T1,T2,t2flight,d,discrep] = ...
-                        SLIPsim(vbelt1,vbelt2,theta01(i),theta02(j),U01(k),V01(l),c1,c2,K1,K2);
+                        SLIPsim(vbelt1,vbelt2,theta01(i),theta02(j),U01(k),V01(l),c1(m),c2(m),K1,K2);
                     if isnan(discrep)
                         disp('solution invalid');
                     end
