@@ -243,9 +243,9 @@ Tgnd2 = Tgnd2(Tgnd2 >= 0); %select positive root only
 Xgnd2 = U2(end)*Tgnd2 + (X2(end) + d); %horz distance travelled during that time
 Vgnd2 = V2(end) + g*Tgnd2;
 
-% discrep = Xgnd2 - Xgnd1;
+discrep = Xgnd2 - Xgnd1;
 
-discrep = sqrt((Xgnd2 - Xgnd1)^2 + (Vgnd2 - Vgnd1)^2 + (U2(end) - U01)^2);
+discrep = sqrt((Xgnd2 - Xgnd1)^2 + (Vgnd2 - Vgnd1)^2 + (U2(e)
 
 %% Function to invalidate a solution
     function invalidate
