@@ -234,14 +234,18 @@ vi = interp1(t,v,ti);
 Tgnd1 = roots([g/2 V01 -Y01]); %time to fall to ground
 Tgnd1 = Tgnd1(Tgnd1 >= 0); %select positive root only
 Xgnd1 = U01*Tgnd1 + X01; %horz distance travelled during that time
+Vgnd1 = V01 + g*Tgnd1;
 
 %Phase 2
 % note: Tgnd2 = time to free fall to the ground from Phase 2 end
 Tgnd2 = roots([-g/2 V2(end) Y2(end)]); %time to fall to ground from beginning of flight phase 2
 Tgnd2 = Tgnd2(Tgnd2 >= 0); %select positive root only
 Xgnd2 = U2(end)*Tgnd2 + (X2(end) + d); %horz distance travelled during that time
+Vgnd2 = V2(end) + g*Tgnd2;
 
-discrep = Xgnd2 - Xgnd1;
+% discrep = Xgnd2 - Xgnd1;
+
+discrep = sqrt((Xgnd2 - Xgnd1)^2 + (Vgnd2 - Vgnd1)^2 + (U2(end) - U01)^2);
 
 %% Function to invalidate a solution
     function invalidate

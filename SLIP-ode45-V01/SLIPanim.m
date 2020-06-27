@@ -1,17 +1,15 @@
-function SLIPanim(ti,xi,yi,ui,vi,T1,T2,t2flight,d,vbelt1,vbelt2,saveanimation,plotvec)
+function SLIPanim(ti,xi,yi,ui,vi,T1,T2,t2flight,d,vbelt1,vbelt2,filename,plotvec)
 %UNTITLED Summary of this function goes here
 % CAREFUL: discrep is an output of SLIPsim but not a required input for
 % SLIPanim.m!
+% if filename is empty or FALSE, then no animation will be saved.
+
 
 %   Detailed explanation goes here
 
 if nargin < 12
-    saveanimation = true;
-    plotvec = true;
-end
-
-if saveanimation
     filename = 'SLIPSBT.gif';
+    plotvec = true;
 end
 
 
@@ -57,7 +55,7 @@ for i = 1:n+1
         lh(4) = quiver(xi(i),yi(i),ui(i),vi(i),'color',lcolor,'linewidth',2,'linestyle','--','maxheadsize',1);
     end
     drawnow
-    if saveanimation
+    if filename
         % Get an image of the plot
         frame = getframe(gcf);
         im = frame2im(frame);

@@ -27,8 +27,8 @@ g = 9.81; %in m/s^2
 vbelt1 = 1.5/sqrt(g*L0);
 vbelt2 = 0.5/sqrt(g*L0);
 % theta is positive CCW, where zero is the vertical
-theta01 = linspace(pi/3,0,21);
-theta02 = linspace(pi/3,-pi/3,42);
+theta01 = linspace(pi/2.25,0,21);
+theta02 = linspace(pi/2.25,-pi/2.25,42);
 U01 = linspace(0,2*max(vbelt1,vbelt2),21);
 V01 = linspace(0,2*max(vbelt1,vbelt2),21);
 
