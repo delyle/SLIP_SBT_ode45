@@ -2,7 +2,7 @@
 % Animate minimum discrep for each zeta from a parameter sweep
 clc; close all; clear;
 
-datafile = 'sweepJun2220.mat'; 
+datafile = 'sweepJun2720_2.mat'; 
 
 A = load(datafile);
 
@@ -30,7 +30,7 @@ for i = 1:size(disM,5)
     
    M = disM(:,:,:,:,i);
    [discrep,j] = min(M(:).^2); % I squared the discrepancy because sometimes it is negative!!
-   disp(['Discrepancy is ', num2str(discrep)])
+   disp(['Discrepancy is ', num2str(sqrt(discrep))])
    if ~isnan(discrep)
    [I,J,K,L] = ind2sub(size(M),j); % convert linear index to subscripts
    
