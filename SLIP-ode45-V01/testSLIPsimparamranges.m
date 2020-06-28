@@ -3,6 +3,9 @@
 % non-dimensionalization of this problem.
 clear; close all; clc;
 
+fprintf('Starting new simulation');
+pause(2);
+
 %% Non-dimensionalization of problem
 
 % [M] = m
