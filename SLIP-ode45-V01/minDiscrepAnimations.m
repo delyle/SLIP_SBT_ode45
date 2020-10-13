@@ -45,7 +45,13 @@ for i = 1:size(disM,5)
    
    [ti,xi,yi,ui,vi,T1,T2,t2flight,d,~] = ...
        SLIPsim(vbelt1,vbelt2,theta01,theta02,U01,V01,c1,c2,K1,K2);
-   SLIPanim(ti,xi,yi,ui,vi,T1,T2,t2flight,d,vbelt1,vbelt2,filename,true);
+   
+   % find time of closest approach
+   i_closest = closestapproach(ti,vi,xi,yi,T2);
+   
+   ia = 1:i_closest; %animation index
+   
+   SLIPanim(ti(ia),xi(ia),yi(ia),ui(ia),vi(ia),T1,T2,t2flight,d,vbelt1,vbelt2,filename,true);
    
    % save data for plotting
    theta01best(i) = theta01;
