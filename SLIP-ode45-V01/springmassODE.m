@@ -1,7 +1,7 @@
+function dZdT = springmassODE(T,Z,K,L0,vbelt,c)
 % The set of differential equations to be submitted to ode45()
 % Solves the dynamics of SLIP on a treadmill
 
-function dZdT = springmassODE(T,Z,K,L0,vbelt,c)
 if nargin < 6
     c = 0;
 end
